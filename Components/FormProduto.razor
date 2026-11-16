@@ -1,0 +1,34 @@
+
+<EditForm Model="novo" OnValidSubmit="Cadastrar">
+
+    <DataAnnotationsValidator />
+
+    <label class="form-label">Nome</label>
+    <InputText class="form-control"
+               @bind-Value="novo.Nome" />
+    <ValidationMessage For="() => novo.Nome" />
+
+    <label class="form-label mt-3">Preço</label>
+    <InputNumber class="form-control"
+                 @bind-Value="novo.Preco" />
+    <ValidationMessage For="() => novo.Preco" />
+
+    <button class="btn btn-primary mt-3">
+        Adicionar
+    </button>
+
+</EditForm>
+
+@code {
+    private Produto novo = new();
+
+    [Parameter]
+    public EventCallback<Produto> AoSalvar { get; set; }
+
+    private async Task Cadastrar()
+    {
+        await AoSalvar.InvokeAsync(novo);
+
+        novo = new();
+    }
+}
