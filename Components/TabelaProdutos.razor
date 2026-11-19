@@ -4,6 +4,7 @@
         <tr>
             <th>Nome</th>
             <th>Preço</th>
+            <th>Ação</th>
         </tr>
     </thead>
 
@@ -13,6 +14,12 @@
             <tr>
                 <td>@p.Nome</td>
                 <td>@p.Preco.ToString("C")</td>
+                <td>
+                    <button class="btn btn-danger btn-sm"
+                            @onclick="() => Excluir(p)">
+                        Excluir
+                    </button>
+                </td>
             </tr>
         }
     </tbody>
@@ -21,4 +28,12 @@
 @code {
     [Parameter]
     public List<Produto> Produtos { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<Produto> AoExcluir { get; set; }
+
+    private async Task Excluir(Produto produto)
+    {
+        await AoExcluir.InvokeAsync(produto);
+    }
 }

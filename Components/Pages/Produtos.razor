@@ -1,4 +1,8 @@
+
 @page "/produtos"
+@using Microsoft.EntityFrameworkCore
+@using SistemaEstoque.Data
+@inject IDbContextFactory<AppDbContext> DbFactory
 
 <h3 class="mb-4">Produtos</h3>
 
@@ -19,7 +23,8 @@
             }
             else
             {
-                <TabelaProdutos Produtos="produtos" />
+                <TabelaProdutos Produtos="produtos"
+                                AoExcluir="Excluir" />
             }
         </Cartao>
     </div>
@@ -28,8 +33,42 @@
 @code {
     private List<Produto> produtos = new();
 
-    private void Adicionar(Produto produto)
+    protected override async Task OnInitializedAsync()
     {
-        produtos.Add(produto);
+        await CarregarProdutos();
+    }
+
+    private async Task CarregarProdutos()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+
+        produtos = await db.Produtos.ToListAsync();
+    }
+
+    private async Task Adicionar(Produto produto)
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+
+        db.Produtos.Add(produto);
+
+        await db.SaveChangesAsync();
+
+        await CarregarProdutos();
+    }
+
+    private async Task Excluir(Produto produto)
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+
+        var produtoBanco = await db.Produtos.FindAsync(produto.Id);
+
+        if (produtoBanco != null)
+        {
+            db.Produtos.Remove(produtoBanco);
+
+            await db.SaveChangesAsync();
+        }
+
+        await CarregarProdutos();
     }
 }

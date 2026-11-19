@@ -5,6 +5,8 @@ namespace SistemaEstoque.Models;
 
 public class Produto
 {
+    public int Id { get; set; }
+
     [Required(ErrorMessage = "Informe o nome.")]
     public string Nome { get; set; } = "";
 
